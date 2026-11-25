@@ -26,11 +26,11 @@ impl<'a, K: FromStr> KeyValue<'a, K> {
     /// assert_eq!(kv.value, "9.3 // Some comment");
     /// ```
     pub fn parse(s: &'a str) -> Result<Self, K::Err> {
-        let mut split = s.split(':').map(str::trim);
+        let (key, value) = s.split_once(':').unwrap_or((s, ""));
 
         Ok(Self {
-            key: split.next().unwrap_or(s.trim()).parse()?,
-            value: split.next().unwrap_or_default(),
+            key: key.trim().parse()?,
+            value: value.trim(),
         })
     }
 }
@@ -62,6 +62,13 @@ mod tests {
         let kv = KeyValue::<Key>::parse("  key    :  value   ").unwrap();
         assert_eq!(kv.key, Key);
         assert_eq!(kv.value, "value");
+    }
+
+    #[test]
+    fn value_with_colons() {
+        let kv = KeyValue::<Key>::parse("key: one: two ").unwrap();
+        assert_eq!(kv.key, Key);
+        assert_eq!(kv.value, "one: two");
     }
 
     #[test]

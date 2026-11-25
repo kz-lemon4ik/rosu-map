@@ -80,6 +80,18 @@ fn metadata() {
 }
 
 #[test]
+fn metadata_values_keep_their_colons() {
+    let metadata: Metadata = rosu_map::from_str(
+        "osu file format v14\n\n[Metadata]\nArtist:Momohara Natsuki (CV: Murakawa Rie)\nTitle:Re:Zero\nVersion:Insane: Extra\n",
+    )
+    .unwrap();
+
+    assert_eq!(metadata.artist, "Momohara Natsuki (CV: Murakawa Rie)");
+    assert_eq!(metadata.title, "Re:Zero");
+    assert_eq!(metadata.version, "Insane: Extra");
+}
+
+#[test]
 fn difficulty() {
     let difficulty: Difficulty = rosu_map::from_str(RENATUS).unwrap();
 
